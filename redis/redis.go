@@ -23,6 +23,10 @@ type redisConf struct {
 }
 
 func NewRedis(addr, pwd string, db int64) (err error) {
+	if addr == "" {
+		addr = "127.0.0.1:6379"
+	}
+
 	once.Do(func() {
 		rds = &redisConf{
 			address: addr,
@@ -37,6 +41,14 @@ func NewRedis(addr, pwd string, db int64) (err error) {
 	})
 
 	return
+}
+
+func IsOK() bool {
+	if redisPool == nil {
+		return false
+	}
+
+	return true
 }
 
 func (r *redisConf) init() error {
