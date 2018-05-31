@@ -1,46 +1,59 @@
 package redis
 
 import (
-	"log"
-
-	toml "github.com/extrame/go-toml-config"
-	"github.com/extrame/goblet"
 	"github.com/garyburd/redigo/redis"
+	"log"
+	"sync"
 )
 
 //TODO
 
-type Redis struct {
-	address *string
-	pwd     *string
-	db      *int64
+var (
+	rds  *redisConf
+	once sync.Once
+
+	redisPool   *redis.Pool
+	PoolMaxIdle = 10
+)
+
+type redisConf struct {
+	address string
+	pwd     string
+	db      int64
 }
 
-var redisPool *redis.Pool
-var PoolMaxIdle = 10
+func NewRedis(addr, pwd string, db int64) (err error) {
+	once.Do(func() {
+		rds = &redisConf{
+			address: addr,
+			pwd:     pwd,
+			db:      db,
+		}
 
-func (r *Redis) ParseConfig(prefix string) error {
-	r.address = toml.String(prefix+".address", "localhost:6379")
-	r.pwd = toml.String(prefix+".password", "")
-	r.db = toml.Int64(prefix+".db", 0)
-	return nil
+		err := rds.init()
+		if err != nil {
+			return
+		}
+	})
+
+	return
 }
 
-func (r *Redis) Init(server *goblet.Server) error {
+func (r *redisConf) init() error {
 	redisPool = redis.NewPool(func() (redis.Conn, error) {
-		c, err := redis.Dial("tcp", *r.address)
+		c, err := redis.Dial("tcp", r.address)
 		if err != nil {
 			log.Println("--Redis--Connect redis fail:" + err.Error())
 			return nil, err
 		}
-		if len(*r.pwd) > 0 {
-			if _, err := c.Do("AUTH", *r.pwd); err != nil {
+		if len(r.pwd) > 0 {
+			if _, err := c.Do("AUTH", r.pwd); err != nil {
 				c.Close()
 				log.Println("--Redis--Auth redis fail:" + err.Error())
 				return nil, err
 			}
 		}
-		if _, err := c.Do("SELECT", *r.db); err != nil {
+		if _, err := c.Do("SELECT", r.db); err != nil {
 			c.Close()
 			log.Println("--Redis--Select redis db fail:" + err.Error())
 			return nil, err

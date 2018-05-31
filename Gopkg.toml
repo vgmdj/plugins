@@ -26,18 +26,6 @@
 
 
 [[constraint]]
-  name = "github.com/astaxie/beego"
-  version = "1.9.2"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/extrame/go-toml-config"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/extrame/goblet"
-
-[[constraint]]
   name = "github.com/garyburd/redigo"
   version = "1.6.0"
 
