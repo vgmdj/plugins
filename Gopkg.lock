@@ -16,9 +16,18 @@
   packages = ["."]
   revision = "e5adc2ada8b8efff032bf61173a233d143e9318e"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/vgmdj/utils"
+  packages = [
+    "logger",
+    "logger/logs"
+  ]
+  revision = "e53a3250c8802746867c3a58a525329612236347"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d858ae469abf93734d8378ecc7af4126f73b8c6f5d91997a63a7f9a475bc2d23"
+  inputs-digest = "8d2c53a5c42e08bd3888b160f55ac7b2d1e94be8329344a71c0757f4087f9a8a"
   solver-name = "gps-cdcl"
   solver-version = 1

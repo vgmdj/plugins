@@ -3,61 +3,73 @@ package rabbitmq
 import (
 	"fmt"
 	"github.com/streadway/amqp"
-	"log"
+	"github.com/vgmdj/utils/logger"
+	"sync"
 )
 
-var (
-	rabbitmqHost     = ""
-	rabbitmqPort     = ""
-	rabbitmqVhost    = ""
-	rabbitmqUserName = ""
-	rabbitmqPassword = ""
+//map[dialURL]*amqp.Connection
+var connection sync.Map
 
+//Rabbit
+type rabbit struct {
 	conn *amqp.Connection
 	ch   *amqp.Channel
-)
+}
 
-//InitMQ
-func InitMQ(host, port, vhost, userName, password string) {
-
-	var err error
-
-	rabbitmqHost = host
-	rabbitmqPort = port
-	rabbitmqVhost = vhost
-	rabbitmqUserName = userName
-	rabbitmqPassword = password
+//NewRabbit
+func NewRabbit(server, vhost, userName, password string) (*rabbit, error) {
 
 	if vhost == "" {
-		rabbitmqVhost = "/"
+		vhost = "/"
 	} else if vhost[0] != '/' {
-		rabbitmqVhost = "/" + vhost
+		vhost = "/" + vhost
 	}
 
-	dialUrl := fmt.Sprintf("amqp://%s:%s@%s:%s%s", rabbitmqUserName,
-		rabbitmqPassword, rabbitmqHost, rabbitmqPort, rabbitmqVhost)
-	conn, err = amqp.Dial(dialUrl)
-	if err != nil {
-		log.Fatalf("%s: %s\n", "Failed to connect to RabbitMQ", err)
-		return
+	var (
+		connValue interface{}
+		ok        bool
+		conn      *amqp.Connection
+		ch        *amqp.Channel
+		err       error
+	)
+
+	dialURL := fmt.Sprintf("amqp://%s:%s@%s%s", userName, password, server, vhost)
+	if connValue, ok = connection.Load(dialURL); !ok {
+		return connect(dialURL)
+	}
+
+	conn, ok = connValue.(*amqp.Connection)
+	if !ok {
+		logger.Error("sync map error")
+		return connect(dialURL)
 	}
 
 	ch, err = conn.Channel()
 	if err != nil {
-		log.Fatalf("%s: %s\n", "Failed to open a channel", err)
-		return
+		return nil, fmt.Errorf("%s: %s\n", "Failed to open a channel", err)
 	}
+
+	return &rabbit{conn: conn, ch: ch}, nil
 
 }
 
-//CloseQueue
-func CloseQueue(queue string) {
-	num, err := ch.QueueDelete(queue, false, false, false)
+//connect
+func connect(dialURL string) (*rabbit, error) {
+	conn, err := amqp.Dial(dialURL)
 	if err != nil {
-		log.Println(err.Error())
-		return
+		return nil, fmt.Errorf("%s: %s\n", "Failed to connect to RabbitMQ", err)
 	}
 
-	log.Println("delete queue ", queue, num)
+	connection.Store(dialURL, conn)
 
+	var ch *amqp.Channel
+	ch, err = conn.Channel()
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s\n", "Failed to open a channel", err)
+	}
+
+	return &rabbit{
+		conn: conn,
+		ch:   ch,
+	}, nil
 }
