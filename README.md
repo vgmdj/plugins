@@ -1,5 +1,7 @@
 # plugins
 common plugins
+- Redis
+- Message Queue
 
 # redis
 对外提供一个全局的redis，配置好连接信息后，只需调用相应的函数即可
@@ -15,4 +17,7 @@ common plugins
   
   //v == "value"
 
-``
+```
+
+# MQ
+[to be continued...](https://github.com/vgmdj/plugins/tree/master/mq)
