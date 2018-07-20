@@ -2,7 +2,7 @@ package redis
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"log"
+	"github.com/vgmdj/utils/logger"
 	"sync"
 )
 
@@ -53,19 +53,19 @@ func (r *redisConf) init() error {
 	redisPool = redis.NewPool(func() (redis.Conn, error) {
 		c, err := redis.Dial("tcp", r.address)
 		if err != nil {
-			log.Println("--Redis--Connect redis fail:" + err.Error())
+			logger.Error("--Redis--Connect redis fail:" + err.Error())
 			return nil, err
 		}
 		if len(r.pwd) > 0 {
 			if _, err := c.Do("AUTH", r.pwd); err != nil {
 				c.Close()
-				log.Println("--Redis--Auth redis fail:" + err.Error())
+				logger.Error("--Redis--Auth redis fail:" + err.Error())
 				return nil, err
 			}
 		}
 		if _, err := c.Do("SELECT", r.db); err != nil {
 			c.Close()
-			log.Println("--Redis--Select redis db fail:" + err.Error())
+			logger.Error("--Redis--Select redis db fail:" + err.Error())
 			return nil, err
 		}
 		return c, nil
@@ -78,7 +78,7 @@ func Expire(key string, seconds int) (err error) {
 	defer c.Close()
 
 	if _, err = c.Do("EXPIRE", key, seconds); err != nil {
-		log.Println(err.Error())
+		logger.Error(err.Error())
 		return
 	}
 

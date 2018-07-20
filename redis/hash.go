@@ -2,7 +2,7 @@ package redis
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"log"
+	"github.com/vgmdj/utils/logger"
 )
 
 //TODO details
@@ -12,7 +12,7 @@ func HSet(key, itemKey string, item interface{}) (err error) {
 	defer c.Close()
 
 	if _, err = c.Do("HSET", key, itemKey, item); err != nil {
-		log.Println(err.Error())
+		logger.Error(err.Error())
 		return
 	}
 
@@ -191,7 +191,7 @@ func HDel(userKey, itemKey string) (err error) {
 	defer c.Close()
 	_, err = c.Do("HDEL", userKey, itemKey)
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error(err.Error())
 		return
 	}
 	return

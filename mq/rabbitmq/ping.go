@@ -1,7 +1,5 @@
 package rabbitmq
 
-const(
+const (
 	pingTestQueue = ""
-
 )
-

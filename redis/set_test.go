@@ -5,7 +5,7 @@ import "testing"
 func TestSET(t *testing.T) {
 	NewRedis("", "", 0)
 
-	SAdd("123", 1, 2, 3, 4, 5, 6, 7, 8,9)
+	SAdd("123", 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
 	members, _ := SMembersInt("123")
 	t.Log(members)
