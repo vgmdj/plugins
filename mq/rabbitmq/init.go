@@ -12,8 +12,9 @@ var connection sync.Map
 
 //Rabbit
 type rabbit struct {
-	conn *amqp.Connection
-	ch   *amqp.Channel
+	conn    *amqp.Connection
+	ch      *amqp.Channel
+	dialURL string
 }
 
 //NewRabbit
@@ -46,11 +47,39 @@ func NewRabbit(server, vhost, userName, password string) (*rabbit, error) {
 
 	ch, err = conn.Channel()
 	if err != nil {
+		connection.Delete(dialURL)
 		return nil, fmt.Errorf("%s: %s\n", "Failed to open a channel", err)
 	}
 
-	return &rabbit{conn: conn, ch: ch}, nil
+	return &rabbit{conn: conn, ch: ch, dialURL: dialURL}, nil
 
+}
+
+//Reconnect
+func (mq *rabbit) Reconnect() (err error) {
+
+	conn, err := amqp.Dial(mq.dialURL)
+	if err != nil {
+		return fmt.Errorf("%s: %s\n", "Failed to connect to RabbitMQ", err)
+	}
+
+	connection.Store(mq.dialURL, conn)
+
+	var ch *amqp.Channel
+	ch, err = conn.Channel()
+	if err != nil {
+		return fmt.Errorf("%s: %s\n", "Failed to open a channel", err)
+	}
+
+	mq.conn = conn
+	mq.ch = ch
+
+	return
+}
+
+//SetQos
+func (mq *rabbit) SetQos(count, size int, global bool) (err error) {
+	return mq.ch.Qos(count, size, global)
 }
 
 //connect
@@ -69,7 +98,8 @@ func connect(dialURL string) (*rabbit, error) {
 	}
 
 	return &rabbit{
-		conn: conn,
-		ch:   ch,
+		conn:    conn,
+		ch:      ch,
+		dialURL: dialURL,
 	}, nil
 }

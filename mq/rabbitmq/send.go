@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"fmt"
 	"github.com/streadway/amqp"
 	"github.com/vgmdj/utils/logger"
 )
@@ -8,7 +9,7 @@ import (
 func (mq *rabbit) SendToQue(exchange, key string, body []byte) (err error) {
 	err = mq.ch.ExchangeDeclare(exchange, "direct", true, false, false, false, nil)
 	if err != nil {
-		logger.Error("%s: %s\n", "Failed to declare a exchange", err)
+		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to declare a exchange", err))
 		return
 	}
 
@@ -22,9 +23,9 @@ func (mq *rabbit) SendToQue(exchange, key string, body []byte) (err error) {
 			Body:         body,
 			DeliveryMode: amqp.Persistent,
 		})
-	logger.Info(" [x] Sent %s", body)
+	logger.Info(fmt.Sprintf(" [x] Sent %s", string(body)))
 	if err != nil {
-		logger.Error("%s: %s\n", "Failed to publish a message", err)
+		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to publish a message", err))
 		return
 	}
 
@@ -34,19 +35,19 @@ func (mq *rabbit) SendToQue(exchange, key string, body []byte) (err error) {
 func (mq *rabbit) SendToDLQue(exchange, key, queue string, body []byte, args amqp.Table) (err error) {
 	err = mq.ch.ExchangeDeclare(exchange, "direct", true, false, false, false, nil)
 	if err != nil {
-		logger.Error("%s: %s\n", "Failed to declare a exchange", err)
+		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to declare a exchange", err))
 		return
 	}
 
 	_, err = mq.ch.QueueDeclare(queue, true, false, false, false, args)
 	if err != nil {
-		logger.Error("%s: %s\n", "Failed to declare a queue", err)
+		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to declare a queue", err))
 		return
 	}
 
 	err = mq.ch.QueueBind(queue, key, exchange, false, nil)
 	if err != nil {
-		logger.Error("%s: %s\n", "Failed to bind a exchange", err)
+		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to bind a exchange", err))
 		return
 	}
 
@@ -60,9 +61,9 @@ func (mq *rabbit) SendToDLQue(exchange, key, queue string, body []byte, args amq
 			Body:         body,
 			DeliveryMode: amqp.Persistent,
 		})
-	logger.Info(" [x] Sent %s", body)
+	logger.Info(fmt.Sprintf(" [x] Sent %s", body))
 	if err != nil {
-		logger.Error("%s: %s\n", "Failed to publish a message", err)
+		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to publish a message", err))
 		return
 	}
 
