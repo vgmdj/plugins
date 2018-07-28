@@ -1,6 +1,7 @@
 # Now
 直接使用RabbitMQ包<br>
 [README](https://github.com/vgmdj/plugins/tree/master/mq/rabbitmq)
+主要封装重连，健康检查过程
 
 
 ------------------------------------------
