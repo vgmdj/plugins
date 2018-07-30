@@ -11,14 +11,14 @@ import (
 var connection sync.Map
 
 //Rabbit
-type rabbit struct {
+type Rabbit struct {
 	conn    *amqp.Connection
 	ch      *amqp.Channel
 	dialURL string
 }
 
 //NewRabbit
-func NewRabbit(server, vhost, userName, password string) (*rabbit, error) {
+func NewRabbit(server, vhost, userName, password string) (*Rabbit, error) {
 
 	if vhost == "" {
 		vhost = "/"
@@ -51,12 +51,12 @@ func NewRabbit(server, vhost, userName, password string) (*rabbit, error) {
 		return nil, fmt.Errorf("%s: %s\n", "Failed to open a channel", err)
 	}
 
-	return &rabbit{conn: conn, ch: ch, dialURL: dialURL}, nil
+	return &Rabbit{conn: conn, ch: ch, dialURL: dialURL}, nil
 
 }
 
 //Reconnect
-func (mq *rabbit) Reconnect() (err error) {
+func (mq *Rabbit) Reconnect() (err error) {
 
 	conn, err := amqp.Dial(mq.dialURL)
 	if err != nil {
@@ -78,12 +78,12 @@ func (mq *rabbit) Reconnect() (err error) {
 }
 
 //SetQos
-func (mq *rabbit) SetQos(count, size int, global bool) (err error) {
+func (mq *Rabbit) SetQos(count, size int, global bool) (err error) {
 	return mq.ch.Qos(count, size, global)
 }
 
 //connect
-func connect(dialURL string) (*rabbit, error) {
+func connect(dialURL string) (*Rabbit, error) {
 	conn, err := amqp.Dial(dialURL)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s\n", "Failed to connect to RabbitMQ", err)
@@ -97,7 +97,7 @@ func connect(dialURL string) (*rabbit, error) {
 		return nil, fmt.Errorf("%s: %s\n", "Failed to open a channel", err)
 	}
 
-	return &rabbit{
+	return &Rabbit{
 		conn:    conn,
 		ch:      ch,
 		dialURL: dialURL,

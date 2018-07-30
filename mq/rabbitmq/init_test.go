@@ -63,7 +63,7 @@ func TestPing(t *testing.T) {
 
 }
 
-func receive(rabbit *rabbit) {
+func receive(rabbit *Rabbit) {
 	//receive from mq
 	msgs, _ := rabbit.ReceiveFromMQ("exchange", "key", "queue", nil)
 	for msg := range msgs {

@@ -6,7 +6,7 @@ import (
 	"github.com/vgmdj/utils/logger"
 )
 
-func (mq *rabbit) SendToQue(exchange, key string, body []byte) (err error) {
+func (mq *Rabbit) SendToQue(exchange, key string, body []byte) (err error) {
 	err = mq.ch.ExchangeDeclare(exchange, "direct", true, false, false, false, nil)
 	if err != nil {
 		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to declare a exchange", err))
@@ -32,7 +32,7 @@ func (mq *rabbit) SendToQue(exchange, key string, body []byte) (err error) {
 	return
 }
 
-func (mq *rabbit) SendToDLQue(exchange, key, queue string, body []byte, args amqp.Table) (err error) {
+func (mq *Rabbit) SendToDLQue(exchange, key, queue string, body []byte, args amqp.Table) (err error) {
 	err = mq.ch.ExchangeDeclare(exchange, "direct", true, false, false, false, nil)
 	if err != nil {
 		logger.Error(fmt.Sprintf("%s: %s\n", "Failed to declare a exchange", err))

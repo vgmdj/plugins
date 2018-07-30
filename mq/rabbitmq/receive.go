@@ -7,7 +7,7 @@ import (
 )
 
 //GetQueue assume the queue is already exist
-func (mq *rabbit) GetQueue(name string, args amqp.Table) (queue amqp.Queue, err error) {
+func (mq *Rabbit) GetQueue(name string, args amqp.Table) (queue amqp.Queue, err error) {
 	queue, err = mq.ch.QueueDeclarePassive(name, true, false,
 		false, false, args)
 	if err != nil {
@@ -19,7 +19,7 @@ func (mq *rabbit) GetQueue(name string, args amqp.Table) (queue amqp.Queue, err 
 }
 
 //ReceiveFromMQ
-func (mq *rabbit) ReceiveFromMQ(exchange, key, queue string, args amqp.Table) (msgs <-chan amqp.Delivery, err error) {
+func (mq *Rabbit) ReceiveFromMQ(exchange, key, queue string, args amqp.Table) (msgs <-chan amqp.Delivery, err error) {
 	if mq.ch == nil {
 		err = fmt.Errorf("Failed to connect to RabbitMQ ")
 		return
