@@ -24,3 +24,10 @@ for msg := range msgs {
 
 }
 ```
+
+## 限流
+```
+每次ack后，再接收新消息
+rabbit.SetQos(1,0,true)
+
+```
