@@ -1,0 +1,9 @@
+# github.com/garyburd/redigo v2.0.0+incompatible
+github.com/garyburd/redigo/redis
+# github.com/gomodule/redigo v2.0.0+incompatible
+github.com/gomodule/redigo/internal
+# github.com/streadway/amqp v0.0.0-20180806233856-70e15c650864
+github.com/streadway/amqp
+# github.com/vgmdj/utils v0.0.0-20180827070111-166b8fe4eb6a
+github.com/vgmdj/utils/logger
+github.com/vgmdj/utils/logger/logs
