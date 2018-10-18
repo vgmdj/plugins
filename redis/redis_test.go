@@ -3,7 +3,7 @@ package redis
 import "testing"
 
 func TestSET(t *testing.T) {
-	NewRedis("", "", 0)
+	NewRedis("10.11.22.77:6379", "wangrui", 0)
 
 	SAdd("123", 1, 2, 3, 4, 5, 6, 7, 8, 9)
 
