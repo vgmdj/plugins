@@ -32,3 +32,15 @@ func TestString(t *testing.T) {
 	t.Log(str)
 
 }
+
+
+func TestSetNX(t *testing.T) {
+	NewRedis("10.11.22.77:6379", "wangrui", 0)
+
+	SetNX("124", 421,10)
+
+	numbers, _ := GetInt("124")
+	t.Log(numbers)
+
+
+}

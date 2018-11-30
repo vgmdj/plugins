@@ -1,9 +1,10 @@
 package redis
 
 import (
+	"sync"
+
 	"github.com/gomodule/redigo/redis"
 	"github.com/vgmdj/utils/logger"
-	"sync"
 )
 
 var (
@@ -83,4 +84,17 @@ func Expire(key string, seconds int) (err error) {
 	}
 
 	return
+}
+
+func SetNX(key string, value interface{}, seconds int) (err error) {
+	c := redisPool.Get()
+	defer c.Close()
+
+	if _, err = redis.String(c.Do("SET", key, value, "EX", seconds, "NX")); err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
+	return
+
 }
