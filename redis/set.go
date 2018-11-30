@@ -5,7 +5,7 @@ import (
 	"github.com/vgmdj/utils/logger"
 )
 
-//SADD return count of the last one
+//SAdd return count of the last one
 func SAdd(key string, args ...interface{}) (count int64, err error) {
 	c := redisPool.Get()
 	defer c.Close()

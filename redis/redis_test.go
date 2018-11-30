@@ -19,3 +19,16 @@ func TestSET(t *testing.T) {
 	t.Log(strs)
 
 }
+
+func TestString(t *testing.T) {
+	NewRedis("10.11.22.77:6379", "wangrui", 0)
+
+	Set("123", 321)
+
+	numbers, _ := GetInt("123")
+	t.Log(numbers)
+
+	str, _ := GetString("123")
+	t.Log(str)
+
+}
