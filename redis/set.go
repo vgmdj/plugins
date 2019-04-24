@@ -5,14 +5,13 @@ import (
 	"github.com/vgmdj/utils/logger"
 )
 
-//SAdd return count of the last one
-func SAdd(key string, args ...interface{}) (count int64, err error) {
-	c := redisPool.Get()
-	defer c.Close()
+//SAdd and key-value and return the count of key set
+func (c *Client) SAdd(key string, args ...interface{}) (count int64, err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
 
 	for _, v := range args {
-		if count, err = redis.Int64(c.Do("SADD", key, v)); err != nil {
-			logger.Error(err.Error())
+		if count, err = redis.Int64(conn.Do("SADD", key, v)); err != nil {
 			return
 		}
 	}
@@ -20,23 +19,20 @@ func SAdd(key string, args ...interface{}) (count int64, err error) {
 	return
 }
 
-func SCard(key string) (count int64, err error) {
-	c := redisPool.Get()
-	defer c.Close()
+//SCard return the count of key set
+func (c *Client) SCard(key string) (int64, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
 
-	if count, err = redis.Int64(c.Do("SCARD", key)); err != nil {
-		logger.Error(err.Error())
-		return
-	}
-
-	return
+	return redis.Int64(conn.Do("SCARD", key))
 }
 
-func SRem(key string, member interface{}) (err error) {
-	c := redisPool.Get()
-	defer c.Close()
+//SRem remove the member of key set
+func (c *Client) SRem(key string, member interface{}) (err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
 
-	_, err = c.Do("SREM", key, member)
+	_, err = conn.Do("SREM", key, member)
 	if err != nil {
 		logger.Error(err.Error())
 		return
@@ -45,25 +41,27 @@ func SRem(key string, member interface{}) (err error) {
 	return
 }
 
-func SMembersInt(key string) (reply []int, err error) {
-	c := redisPool.Get()
-	defer c.Close()
+//SMembers return all members of key set
+func (c *Client) SMembers(key string) ([]interface{}, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
 
-	if reply, err = redis.Ints(c.Do("SMEMBERS", key)); err != nil {
-		logger.Error(err.Error())
-		return
-	}
-	return
+	return redis.Values(conn.Do("SMEMBERS", key))
+
 }
 
-func SMembersString(key string) (reply []string, err error) {
-	c := redisPool.Get()
-	defer c.Close()
+//SMembersInts return all int members of key set
+func (c *Client) SMembersInts(key string) (reply []int, err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
 
-	if reply, err = redis.Strings(c.Do("SMEMBERS", key)); err != nil {
-		logger.Error(err.Error())
-		return
-	}
+	return redis.Ints(conn.Do("SMEMBERS", key))
+}
 
-	return
+//SMembersStrings return all string members of key set
+func (c *Client) SMembersStrings(key string) (reply []string, err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	return redis.Strings(conn.Do("SMEMBERS", key))
 }

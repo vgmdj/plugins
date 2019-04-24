@@ -2,41 +2,68 @@ package redis
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"github.com/vgmdj/utils/logger"
 )
 
-func Set(key, value interface{}) (err error) {
-	c := redisPool.Get()
-	defer c.Close()
+//Set store string
+func (c *Client) Set(key, value interface{}) (err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
 
-	if _, err = c.Do("SET", key, value); err != nil {
-		logger.Error(err.Error())
+	if _, err = conn.Do("SET", key, value); err != nil {
 		return
 	}
 
 	return
 }
 
-func GetString(key string) (string, bool) {
-	c := redisPool.Get()
-	defer c.Close()
-	count, _ := redis.Int(c.Do("EXISTS", key))
-	if count == 0 {
-		return "", false
-	} else {
-		n, _ := redis.String(c.Do("GET", key))
-		return n, true
+//SetNX set unique string type value
+func (c *Client) SetNX(key string, value interface{}, seconds int) (err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	if _, err = redis.String(conn.Do("SET", key, value, "EX", seconds, "NX")); err != nil {
+		return
 	}
+
+	return
+
 }
 
-func GetInt(key string) (int, bool) {
-	c := redisPool.Get()
-	defer c.Close()
-	count, _ := redis.Int(c.Do("EXISTS", key))
-	if count == 0 {
-		return 0, false
-	} else {
-		n, _ := redis.Int(c.Do("GET", key))
-		return n, true
+//Expire set expire
+func (c *Client) Expire(key string, seconds int) (err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	if _, err = conn.Do("EXPIRE", key, seconds); err != nil {
+		return
 	}
+
+	return
+}
+
+//GetString string get string
+func (c *Client) Get(key string) (interface{}, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	return conn.Do("GET", key)
+
+}
+
+//GetString string get string
+func (c *Client) GetString(key string) (string, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	return redis.String(conn.Do("GET", key))
+
+}
+
+//GetInt string get int
+func (c *Client) GetInt(key string) (int, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	return redis.Int(conn.Do("GET", key))
+
 }
