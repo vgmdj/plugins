@@ -2,6 +2,7 @@ package redis
 
 import (
 	"net"
+	"sync"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -9,6 +10,14 @@ import (
 
 var (
 	ErrNil = redis.ErrNil
+
+	DefaultConf = &ClientConf{
+		Address:        "127.0.0.1:6379",
+		ConnectTimeout: time.Second * 30,
+	}
+
+	cli     *Client
+	cliOnce sync.Once
 )
 
 //ClientConf redis client config
@@ -60,7 +69,7 @@ func (conf *ClientConf) init() {
 
 //DialOptions return the dial options
 func (conf *ClientConf) DialOptions() []redis.DialOption {
-	options := make([]redis.DialOption, 5)
+	options := make([]redis.DialOption, 0)
 	if conf.DB != 0 {
 		options = append(options, redis.DialDatabase(conf.DB))
 	}
@@ -129,6 +138,14 @@ func NewClient(conf *ClientConf) *Client {
 		},
 	}
 
+}
+
+func UniqueClient(conf *ClientConf) *Client {
+	cliOnce.Do(func() {
+		cli = NewClient(conf)
+	})
+
+	return cli
 }
 
 //Get return redis conn
