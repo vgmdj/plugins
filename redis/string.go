@@ -1,7 +1,13 @@
 package redis
 
 import (
+	"fmt"
+
 	"github.com/garyburd/redigo/redis"
+)
+
+var (
+	ExistErr = fmt.Errorf("key already exist")
 )
 
 //Set store string
@@ -9,9 +15,7 @@ func (c *Client) Set(key, value interface{}) (err error) {
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	if _, err = conn.Do("SET", key, value); err != nil {
-		return
-	}
+	_, err = conn.Do("SET", key, value)
 
 	return
 }
@@ -21,24 +25,13 @@ func (c *Client) SetNX(key string, value interface{}, seconds int) (err error) {
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	if _, err = redis.String(conn.Do("SET", key, value, "EX", seconds, "NX")); err != nil {
-		return
+	_, err = redis.String(conn.Do("SET", key, value, "EX", seconds, "NX"))
+	if err == redis.ErrNil {
+		return ExistErr
 	}
 
 	return
 
-}
-
-//Expire set expire
-func (c *Client) Expire(key string, seconds int) (err error) {
-	conn := c.pool.Get()
-	defer conn.Close()
-
-	if _, err = conn.Do("EXPIRE", key, seconds); err != nil {
-		return
-	}
-
-	return
 }
 
 //GetString string get string

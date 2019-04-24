@@ -5,15 +5,21 @@ import (
 	"github.com/vgmdj/utils/logger"
 )
 
-//SAdd and key-value and return the count of key set
+//SAdd add key-value and return the count of success
+//notice: if you want use slice or array , you can only use int, int64, float64, string slice or array
+//SAdd(key, 1,2,3,4,5,6)
+//SAdd(key, []int{1,2,3,4,5,6})
+//SAdd(key, []string{"1","2","3","4","5","6"})
 func (c *Client) SAdd(key string, args ...interface{}) (count int64, err error) {
 	conn := c.pool.Get()
 	defer conn.Close()
 
-	for _, v := range args {
-		if count, err = redis.Int64(conn.Do("SADD", key, v)); err != nil {
-			return
+	for _, v := range convertArgs(args[:]...) {
+		success, err := redis.Int64(conn.Do("SADD", key, v))
+		if err != nil {
+			return count, err
 		}
+		count += success
 	}
 
 	return
@@ -64,4 +70,41 @@ func (c *Client) SMembersStrings(key string) (reply []string, err error) {
 	defer conn.Close()
 
 	return redis.Strings(conn.Do("SMEMBERS", key))
+}
+
+func convertArgs(args ...interface{}) []interface{} {
+	var params []interface{}
+
+	if len(args) == 0 {
+		return params
+	}
+
+	switch args[0].(type) {
+	case []string:
+		for _, v := range args[0].([]string) {
+			params = append(params, v)
+		}
+
+	case []int:
+		for _, v := range args[0].([]int) {
+			params = append(params, v)
+		}
+
+	case []float64:
+		for _, v := range args[0].([]float64) {
+			params = append(params, v)
+		}
+
+	case []int64:
+		for _, v := range args[0].([]int64) {
+			params = append(params, v)
+		}
+
+	default:
+		for _, v := range args {
+			params = append(params, v)
+		}
+	}
+
+	return params
 }
