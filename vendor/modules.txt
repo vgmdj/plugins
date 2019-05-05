@@ -1,10 +1,6 @@
 # github.com/gomodule/redigo v2.0.0+incompatible
 github.com/gomodule/redigo/redis
 github.com/gomodule/redigo/internal
-# github.com/influxdata/influxdb v1.7.6
-github.com/influxdata/influxdb/client
-github.com/influxdata/influxdb/models
-github.com/influxdata/influxdb/pkg/escape
 # github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94
 github.com/streadway/amqp
 # github.com/vgmdj/utils v0.0.0-20190423083320-69bc61d0ca26
