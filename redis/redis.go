@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"go-common/library/net/rpc/context"
 	"net"
 	"sync"
 	"time"
@@ -151,6 +152,11 @@ func UniqueClient(conf *ClientConf) *Client {
 //Get return redis conn
 func (c *Client) GetConn() redis.Conn {
 	return c.pool.Get()
+}
+
+//GetCtxConn return redis conn with provide context
+func (c *Client) GetCtxConn(ctx context.Context) (redis.Conn, error) {
+	return c.pool.GetContext(ctx)
 }
 
 //Do sends a command to the server and returns the received reply.

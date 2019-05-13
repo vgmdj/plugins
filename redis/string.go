@@ -43,6 +43,13 @@ func (c *Client) Get(key string) (interface{}, error) {
 
 }
 
+func (c *Client) GetBytes(key string) ([]byte, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	return redis.Bytes(conn.Do("GET", key))
+}
+
 //GetString string get string
 func (c *Client) GetString(key string) (string, error) {
 	conn := c.pool.Get()
