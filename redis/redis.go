@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"go-common/library/net/rpc/context"
+	"context"
 	"net"
 	"sync"
 	"time"
@@ -147,6 +147,15 @@ func UniqueClient(conf *ClientConf) *Client {
 	})
 
 	return cli
+}
+
+//Ping check the redis status
+func (c *Client) Ping() (err error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	_, err = conn.Do("PING")
+	return err
 }
 
 //Get return redis conn
