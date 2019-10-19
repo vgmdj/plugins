@@ -83,3 +83,13 @@ func (c *Client) Rename(key string, newKeyName string) error {
 	return nil
 
 }
+
+//Rename rename the key
+func (c *Client) FlushAll() error {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("FLUSHALL")
+	return err
+
+}
