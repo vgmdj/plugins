@@ -56,6 +56,15 @@ func (c *Client) SMembers(key string) ([]interface{}, error) {
 
 }
 
+//SMembers return all members of key set
+func (c *Client) SIsMember(key string, member string) (bool, error) {
+	conn := c.pool.Get()
+	defer conn.Close()
+
+	return redis.Bool(conn.Do("SISMEMBER", key, member))
+
+}
+
 //SMembersInts return all int members of key set
 func (c *Client) SMembersInts(key string) (reply []int, err error) {
 	conn := c.pool.Get()

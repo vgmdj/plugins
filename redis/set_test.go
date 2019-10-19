@@ -53,6 +53,17 @@ func TestSET(t *testing.T) {
 		return
 	}
 
+	exist, err := c.SIsMember(key, "9")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if !exist {
+		t.Errorf("expected true, but got false")
+		return
+	}
+
 	c.SRem(key, "9")
 
 	strReply, _ := c.SMembersStrings(key)
@@ -65,6 +76,17 @@ func TestSET(t *testing.T) {
 			t.Errorf("expected %d members is %d, but get %s", k, members[k], v)
 			return
 		}
+	}
+
+	exist, err = c.SIsMember(key, "9")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if exist {
+		t.Errorf("expected false, but got true")
+		return
 	}
 
 }
