@@ -1,5 +1,7 @@
 # github.com/aliyun/aliyun-mns-go-sdk v0.0.0-20191205082232-b251b9d95415
 github.com/aliyun/aliyun-mns-go-sdk
+# github.com/andybalholm/brotli v1.0.4
+github.com/andybalholm/brotli
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/gogap/errors v0.0.0-20200228125012-531a6449b28c
@@ -9,12 +11,10 @@ github.com/gogap/stack
 # github.com/gomodule/redigo v2.0.0+incompatible
 github.com/gomodule/redigo/internal
 github.com/gomodule/redigo/redis
-# github.com/klauspost/compress v1.8.2
+# github.com/klauspost/compress v1.15.0
 github.com/klauspost/compress/flate
 github.com/klauspost/compress/gzip
 github.com/klauspost/compress/zlib
-# github.com/klauspost/cpuid v1.2.1
-github.com/klauspost/cpuid
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
@@ -25,7 +25,7 @@ github.com/streadway/amqp
 github.com/stretchr/testify/assert
 # github.com/valyala/bytebufferpool v1.0.0
 github.com/valyala/bytebufferpool
-# github.com/valyala/fasthttp v1.9.0
+# github.com/valyala/fasthttp v1.34.0
 github.com/valyala/fasthttp
 github.com/valyala/fasthttp/fasthttputil
 github.com/valyala/fasthttp/stackless
