@@ -11,7 +11,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94
 	github.com/stretchr/testify v1.3.0
-	github.com/valyala/fasthttp v1.9.0 // indirect
+	github.com/valyala/fasthttp v1.34.0 // indirect
 	github.com/vgmdj/utils v0.0.0-20190423083320-69bc61d0ca26
 	go.uber.org/atomic v1.6.0
 )
